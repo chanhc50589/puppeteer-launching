@@ -108,23 +108,30 @@ foundDiv2 = await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeou
 
     stage = 9;
 
-result = await page.$eval( 'model-response-content', (element) => element.outerHTML );  // 'code'
+foundButton2 = await page
+  .waitForSelector('gem-icon-button[arialabel="Copy"]', { visible: true, timeout: remainingMs() })
+  .then(() => ({ foundButton: true }))
+  .catch(e => ({ foundButton: false, error: e.message }));
 
-    stage = 10;
+	      stage = 10;
 
 await page.waitForNetworkIdle({
-  idleTime: 500,
+  idleTime: 1500,
   concurrency: 0,
   timeout: remainingMs(),
 });
+	      stage = 11;
+
+	  result = await page.$eval( 'model-response-content', (element) => element.outerHTML );  // 'code'
 
 /* --- */
 
-    stage = 11;
+    stage = 12;
 
     //if (result && result.length > 0){ html = await page.content(); }
 	html = await page.content();
     await browser.close();
+	  console.log("done");
 
     return Response.json({
       ok: true,
