@@ -36,17 +36,7 @@ export async function captureResponse(launchBrowser, getLimits, browserBinding, 
 
   try {
     browser = await launchBrowser(browserBinding);
-    limits = await getLimits(browserBinding);
 
-    // 1. Check concurrency cap
-    if (limits.activeSessions.length >= limits.maxConcurrentSessions) {
-      return Response.json( { ok: false, date: new Date(), error: `All browser slots are currently in use: ${limits}` }, { status: 429 } );
-    }
-
-    // 2. Wait out rate-limit cooldown if needed
-    if (limits.allowedBrowserAcquisitions === 0 && limits.timeUntilNextAllowedBrowserAcquisition > 0) {
-      return Response.json( { ok: false, date: new Date(), error: `rate-limit: ${limits}` }, { status: 429 } );
-    }
 
     page = await browser.newPage();
 
@@ -117,7 +107,7 @@ await page.waitForNetworkIdle({
     return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`stage: ${stage}, ${message}, limits: ${limits}, html: ${html.length}`);
+    console.error(`stage: ${stage}, ${message},  html: ${html.length}`);
 
     return html;
   } finally {
