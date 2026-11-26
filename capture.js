@@ -111,7 +111,7 @@ await page.waitForNetworkIdle({
 
     stage = 11;
 
-    if (result && result.length > 0) ? html = await page.content();
+    if (result && result.length > 0){ html = await page.content(); }
     await browser.close();
 
     return Response.json({
