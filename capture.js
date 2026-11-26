@@ -28,15 +28,14 @@ export function normalizePrompt(input) {
  * @param {string} prompt
  * @returns {Promise<Response>}
  */
-export async function captureResponse(launchBrowser, getLimits, browserBinding, url, prompt) {
+export async function captureResponse(launchBrowser, browserBinding, url, prompt) {
   let stage = 1;
 
-  let browser, limits, page, html;
+  let browser, page, html;
   let found = null, foundDiv = null, foundButton = null, foundDiv2 = null, result = null;
 
   try {
     browser = await launchBrowser(browserBinding);
-
 
     page = await browser.newPage();
 
@@ -101,15 +100,33 @@ await page.waitForNetworkIdle({
 
     stage = 11;
 
-    html = await page.content();
-    //await browser.close();
+    //if (result && result.length > 0){ html = await page.content(); }
+	html = await page.content();
+    await browser.close();
 
-    return result;
+    return Response.json({
+      ok: true,
+      date: new Date(),
+      prompt: prompt,
+      result: result,
+      html: html,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`stage: ${stage}, ${message},  html: ${html.length}`);
+    console.error(`stage: ${stage}, ${message}, html: ${html}`);
 
-    return html;
+    return Response.json(
+      {
+        ok: false,
+        date: new Date(),
+        error: `stage: ${stage}, ${message}`,
+        //connected: browser.isConnected(),
+        //limits: limits,
+        prompt: prompt,
+        html: html,
+      },
+      { status: 500 },
+    );
   } finally {
     if (browser) {
       try {
