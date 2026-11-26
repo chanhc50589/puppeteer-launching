@@ -51,6 +51,8 @@ export async function captureResponse(launchBrowser, browserBinding, url, inputP
 
   let browser, page, html;
   let found = null, foundDiv = null, foundButton = null, foundDiv2 = null, result = null;
+  const deadline = new Date().getTime() + 55_000;
+  const remainingMs = () => Math.max(0, deadline - new Date().getTime());
 
   try {
     browser = await launchBrowser(browserBinding);
@@ -68,7 +70,7 @@ export async function captureResponse(launchBrowser, browserBinding, url, inputP
     stage = 3;
 
 found = await page
-  .waitForSelector('#app-root', { timeout: 20000 })
+  .waitForSelector('#app-root', { timeout: 20_000 })
   .then(() => ({ found: true }))
   .catch(e => ({ found: false, error: e.message }));
 
@@ -102,18 +104,18 @@ await page.click('button[aria-label="Send message"]');
 
     stage = 8;
 
-foundDiv2 = await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+foundDiv2 = await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: remainingMs() });
 
     stage = 9;
 
-result = await page.$eval( 'model-response-content', (element) => element.outerHTML );
+result = await page.$eval( 'model-response-content', (element) => element.outerHTML );  // 'code'
 
     stage = 10;
 
 await page.waitForNetworkIdle({
-  idleTime: 2500,
+  idleTime: 500,
   concurrency: 0,
-  timeout: 50000,
+  timeout: remainingMs(),
 });
 
 /* --- */
