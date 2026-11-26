@@ -7,7 +7,6 @@ export class CaptureService extends WorkerEntrypoint {
     const prompt = normalizePrompt(input);
     return captureResponse(
       (binding) => puppeteer.launch(binding),
-      (binding) => puppeteer.limits(binding),
       this.env.BROWSER,
       url,
       prompt,
