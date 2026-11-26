@@ -31,7 +31,7 @@ export function normalizePrompt(input) {
 export async function captureResponse(launchBrowser, getLimits, browserBinding, url, prompt) {
   let stage = 1;
 
-  let browser, limits;
+  let browser, limits, page, html;
   let found = null, foundDiv = null, foundButton = null, foundDiv2 = null, result = null;
 
   try {
@@ -48,7 +48,7 @@ export async function captureResponse(launchBrowser, getLimits, browserBinding, 
       return Response.json( { ok: false, date: new Date(), error: `rate-limit: ${limits}` }, { status: 429 } );
     }
 
-    const page = await browser.newPage();
+    page = await browser.newPage();
 
     stage = 2;
     await page.goto(url, {
@@ -111,6 +111,7 @@ await page.waitForNetworkIdle({
 
     stage = 11;
 
+    if (result && result.length > 0) ? html = await page.content();
     await browser.close();
 
     return Response.json({
@@ -118,7 +119,7 @@ await page.waitForNetworkIdle({
       date: new Date(),
       prompt: prompt,
       result: result,
-      html: (!result || result.length === 0) ? await page.content() : null,
+      html: html,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -132,7 +133,7 @@ await page.waitForNetworkIdle({
         //connected: browser.isConnected(),
         limits: limits,
         prompt: prompt,
-        html: await page.content(),
+        html: html,
       },
       { status: 500 },
     );
