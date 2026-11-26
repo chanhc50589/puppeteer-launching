@@ -129,7 +129,6 @@ await page.waitForNetworkIdle({
         ok: false,
         date: new Date(),
         error: `stage: ${stage}, ${message}`,
-        connected: browser.isConnected(),
         limits: limits,
         prompt: prompt,
         html: await page.content(),
