@@ -2,7 +2,25 @@
  * @param {unknown} input
  * @returns {string}
  */
-export function normalizePrompt(input) {
+export function normalizePrompt(url, input) {
+
+    if (typeof url !== "string") {
+      throw new TypeError("url must be a string");
+    }
+
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      throw new TypeError("url must be a valid absolute URL");
+    }
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      throw new TypeError("url must use HTTP or HTTPS");
+    }
+
+
+
   const MAX_PROMPT_LENGTH = 8_000;
 
   if (typeof input !== "string") {
@@ -28,7 +46,7 @@ export function normalizePrompt(input) {
  * @param {string} prompt
  * @returns {Promise<Response>}
  */
-export async function captureResponse(launchBrowser, browserBinding, url, prompt) {
+export async function captureResponse(launchBrowser, browserBinding, url, inputPrompt) {
   let stage = 1;
 
   let browser, page, html;
@@ -65,7 +83,7 @@ foundDiv = await page
 
 await page.$eval('div[contenteditable="true"]', el => {
   const p = document.createElement('p');
-  p.textContent = prompt;
+  p.textContent = String(inputPrompt);
   el.replaceChildren(p);
 });
 
@@ -107,7 +125,7 @@ await page.waitForNetworkIdle({
     return Response.json({
       ok: true,
       date: new Date(),
-      prompt: prompt,
+      prompt: inputPrompt,
       result: result,
       html: html,
     });
@@ -120,7 +138,7 @@ await page.waitForNetworkIdle({
         ok: false,
         date: new Date(),
         error: `stage: ${stage}, ${message}`,
-        prompt: prompt,
+        prompt: inputPrompt,
         html: html,
       },
       { status: 500 },
