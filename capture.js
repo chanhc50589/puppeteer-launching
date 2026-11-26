@@ -111,32 +111,15 @@ await page.waitForNetworkIdle({
 
     stage = 11;
 
-    if (result && result.length > 0){ html = await page.content(); }
-    await browser.close();
+    html = await page.content();
+    //await browser.close();
 
-    return Response.json({
-      ok: true,
-      date: new Date(),
-      prompt: prompt,
-      result: result,
-      html: html,
-    });
+    return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`stage: ${stage}, ${message}, limits: ${limits}, html: ${html}`);
+    console.error(`stage: ${stage}, ${message}, limits: ${limits}, html: ${html.length}`);
 
-    return Response.json(
-      {
-        ok: false,
-        date: new Date(),
-        error: `stage: ${stage}, ${message}`,
-        //connected: browser.isConnected(),
-        limits: limits,
-        prompt: prompt,
-        html: html,
-      },
-      { status: 500 },
-    );
+    return html;
   } finally {
     if (browser) {
       try {
