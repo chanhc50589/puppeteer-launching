@@ -76,7 +76,7 @@ foundDiv = await page
 
 await page.$eval('div[contenteditable="true"]', el => {
   const p = document.createElement('p');
-  p.textContent = 'reply in a code block. 4321 + 4321 = ?';
+  p.textContent = prompt;
   el.replaceChildren(p);
 });
 
