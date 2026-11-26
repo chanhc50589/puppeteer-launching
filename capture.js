@@ -81,11 +81,13 @@ foundDiv = await page
 
     stage = 5;
 
-await page.$eval('div[contenteditable="true"]', el => {
+await page.$eval('div[contenteditable="true"]', (el, prompt) => {
   const p = document.createElement('p');
-  p.textContent = String(inputPrompt);
+  p.textContent = prompt;
   el.replaceChildren(p);
-});
+}, 
+  inputPrompt
+);
 
     stage = 6;
 
