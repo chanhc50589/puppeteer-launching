@@ -4,7 +4,7 @@ import { captureResponse, normalizePrompt } from "./capture.js";
 
 export class CaptureService extends WorkerEntrypoint {
   async capture(url, input) {
-    const prompt = normalizePrompt(input);
+    const prompt = normalizePrompt(url, input);
     return captureResponse(
       (binding) => puppeteer.launch(binding),
       this.env.BROWSER,
