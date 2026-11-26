@@ -3,11 +3,13 @@ import { WorkerEntrypoint } from "cloudflare:workers";
 import { captureResponse, normalizePrompt } from "./capture.js";
 
 export class CaptureService extends WorkerEntrypoint {
-  async capture(input) {
+  async capture(url, input) {
     const prompt = normalizePrompt(input);
     return captureResponse(
       (binding) => puppeteer.launch(binding),
+      (binding) => puppeteer.limits(binding),
       this.env.BROWSER,
+      url,
       prompt,
     );
   }
