@@ -50,7 +50,7 @@ export async function captureResponse(launchBrowser, browserBinding, url, inputP
   let stage = 1;
 
   let browser, page, html;
-  let found = null, foundDiv = null, foundButton = null, foundDiv2 = null, result = null;
+  let found = null, foundDiv = null, foundButton = null, foundDiv2 = null, foundButton2 = null, result = null;
   const deadline = new Date().getTime() + 55_000;
   const remainingMs = () => Math.max(0, deadline - new Date().getTime());
 
