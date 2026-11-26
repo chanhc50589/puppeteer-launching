@@ -106,7 +106,7 @@ foundDiv2 = await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
 
     stage = 9;
 
-result = await page.$eval( 'code', (element) => element.outerHTML );
+result = await page.$eval( 'model-response-content', (element) => element.outerHTML );
 
     stage = 10;
 
