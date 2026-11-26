@@ -102,7 +102,7 @@ result = await page.$eval( 'code', (element) => element.outerHTML );
     stage = 10;
 
 await page.waitForNetworkIdle({
-  idleTime: 1500,
+  idleTime: 2500,
   concurrency: 0,
   timeout: 50000,
 });
@@ -122,13 +122,14 @@ await page.waitForNetworkIdle({
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`stage: ${stage}, ${message}`);
+    console.error(`stage: ${stage}, ${message}, limits: ${limits}, html: ${html}`);
 
     return Response.json(
       {
         ok: false,
         date: new Date(),
         error: `stage: ${stage}, ${message}`,
+        //connected: browser.isConnected(),
         limits: limits,
         prompt: prompt,
         html: await page.content(),
